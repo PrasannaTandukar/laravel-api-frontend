@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import {useTokenStore} from "@/stores/token.js"
+import LoginVue from "@/views/LoginVue.vue";
+import AdminLayoutView from "@/views/layouts/AdminLayoutView.vue";
+import DashboardVue from "@/views/pages/DashboardVue.vue";
+import UserVue from "@/views/pages/User/UserVue.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,13 +11,24 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginVue.vue')
+      component: LoginVue
     },
     {
-      path: '/logout',
-      name: 'logout',
-      component: () => import('../views/LogoutVue.vue')
-    },
+      path: '/admin',
+      component: AdminLayoutView,
+      children: [
+        {
+          path: 'dashboard',
+          name: 'admin.dashboard',
+          component: DashboardVue
+        },
+        {
+          path: 'users',
+          name: 'admin.users.index',
+          component: UserVue
+        }
+      ]
+    }
   ]
 })
 

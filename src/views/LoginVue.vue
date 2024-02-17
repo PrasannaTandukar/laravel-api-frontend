@@ -2,6 +2,7 @@
 import loginImage from '@/assets/login-background.jpg'
 import {inject, reactive, ref} from "vue"
 import {useTokenStore} from "@/stores/token.js"
+import router from "@/router/index.js";
 
 const http = inject('http')
 const store = useTokenStore()
@@ -18,10 +19,9 @@ const onSubmit = () => {
     url: '/login',
     data: formData
   }).then(function (response) {
-    if (response.data) {
-      store.authenticationToken = response.data.data.token
+      store.authenticationToken = `Bearer ${response.data.token}`
       store.isAuthenticated = true
-    }
+      router.push({name: 'admin.dashboard'})
   }).catch(function (error) {
     if (error.response.status === 422) {
       errors.value = error.response.data.errors
@@ -69,6 +69,10 @@ const onSubmit = () => {
 </template>
 
 <style scoped>
+::-webkit-scrollbar {
+  display: none;
+}
+
 /* Apply styles to html, body, and .login-page */
 html, body, .login-page {
   margin: 0;
