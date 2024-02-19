@@ -33,10 +33,13 @@ import SidebarVue from "@/components/SidebarVue.vue";
   justify-content: center;
   align-items: center;
   background-color: gainsboro;
+  overflow-y: auto !important;
 }
 
 .card-container {
   height: 90%;
   width:  90%;
+  padding: 20px !important;
+  overflow-y: auto !important;
 }
 </style>

@@ -4,6 +4,7 @@ import LoginVue from "@/views/LoginVue.vue";
 import AdminLayoutView from "@/views/layouts/AdminLayoutView.vue";
 import DashboardVue from "@/views/pages/DashboardVue.vue";
 import UserVue from "@/views/pages/User/UserVue.vue";
+import NotFoundVue from "@/views/errors/NotFoundVue.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,10 @@ const router = createRouter({
           component: UserVue
         }
       ]
+    },
+    {
+      path: '/:notFound',
+      component: NotFoundVue
     }
   ]
 })
