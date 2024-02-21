@@ -1,7 +1,12 @@
 <script setup>
 import {inject, ref} from "vue";
+import DeleteConfirmationDialogVue from "@/components/DeleteConfirmationDialogVue.vue";
+import SnackbarVue from "@/components/SnackbarVue.vue";
 
+// Axios
 const http = inject('http')
+
+// breadcrumbs
 const breadcrumbs = [
   {
     title: 'Users',
@@ -10,6 +15,27 @@ const breadcrumbs = [
     exact: true
   }
 ]
+
+// Table state
+let search = ref('')
+let serverItems = ref([])
+let loading = ref(true)
+let totalItems = ref(0)
+let selected = ref([])
+let itemsPerPage = ref(10)
+let page = ref(1)
+let sortBy = ref()
+
+// snackbar state
+let snackbar = ref(false)
+let text = ref('')
+let timeout = ref(2000)
+let snackbarColor = ref('')
+
+// dialog state
+let dialog = ref(false)
+
+// Table headers
 const headers = [
   {
     title: 'Name',
@@ -21,19 +47,7 @@ const headers = [
     key: 'email',
   }
 ]
-let search = ref('')
-let serverItems = ref([])
-let loading = ref(true)
-let totalItems = ref(0)
-let selected = ref([])
-let snackbar = ref(false)
-let text = ref('')
-let timeout = ref(2000)
-let snackbarColor = ref('')
-let itemsPerPage = ref(10)
-let page = ref(1)
-let sortBy = ref()
-
+// Load table items from server
 const loadItems = ({page, itemsPerPage, sortBy}) => {
   loading.value = true
   http({
@@ -53,6 +67,7 @@ const loadItems = ({page, itemsPerPage, sortBy}) => {
   })
 }
 
+// Delete multiple Items
 const deleteMultipleItems = () => {
   if (selected.value.length === 0) {
     text.value = 'Select at least one item'
@@ -70,6 +85,7 @@ const deleteMultipleItems = () => {
         text.value = 'Successfully deleted users'
         snackbarColor.value = 'green'
         snackbar.value = true
+        dialog.value = false
 
         loadItems({
           page: page.value,
@@ -82,7 +98,6 @@ const deleteMultipleItems = () => {
     })
   }
 }
-
 </script>
 
 <template>
@@ -97,7 +112,7 @@ const deleteMultipleItems = () => {
     </v-breadcrumbs>
   </v-card-actions>
   <v-card-text>
-    <v-btn density="comfortable" icon="mdi-delete" class="float-right" @click="deleteMultipleItems"></v-btn>
+    <v-btn density="comfortable" icon="mdi-delete" class="float-right" @click="dialog = true"></v-btn>
     <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         v-model:page="page"
@@ -114,26 +129,8 @@ const deleteMultipleItems = () => {
     ></v-data-table-server>
   </v-card-text>
 
-  <v-snackbar
-      v-model="snackbar"
-      :timeout="timeout"
-      :color="snackbarColor"
-      location="bottom right"
-  >
-    {{ text }}
-
-    <template v-slot:actions>
-      <v-btn
-          color="white"
-          variant="text"
-          @click="snackbar = false"
-      >
-        Close
-      </v-btn>
-    </template>
-  </v-snackbar>
+  <!-- Snackbar -->
+  <SnackbarVue v-model="snackbar" :timeout="timeout" :snackbar-color="snackbarColor" :text="text" />
+  <!-- Dialog -->
+  <DeleteConfirmationDialogVue v-model="dialog" @delete-confirmation="deleteMultipleItems"/>
 </template>
-
-<style scoped>
-
-</style>
